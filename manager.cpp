@@ -1,0 +1,93 @@
+#include "classdef.h"
+#include "manager.h"
+#include <regex>
+#include <string>
+#include <sstream>
+#include <iostream>
+#include <fstream>
+#include <optional>
+
+void Manager::addContact() {
+    std::string name = "";
+    std::string phone = "";
+    std::string email = "";
+    std::string birthdate = "";
+    
+    std::cout << "Enter a contact.\n";
+    std::cout << "Name           : ";
+    std::getline(std::cin, name);
+    do {
+        std::cout << "Phone Number (123-456-7890): ";
+        std::getline(std::cin, phone);
+    } while (!Manager::isValidPhone(phone));
+    std::cout << "Email Address  : ";
+    std::getline(std::cin, email);
+    do {
+        std::cout << "Birthdate (YYYY-MM-DD): ";
+        std::getline(std::cin, birthdate);
+    } while (!Manager::isValidDate(birthdate));
+
+    
+    std::optional<BirthDate> newBirthDate = BirthDate::fromString(birthdate);
+    
+    if (newBirthDate.has_value()) {
+        Contact newContact(name, phone, email, newBirthDate.value());
+        newContacts.push_back(newContact);
+        std::cout << "Contact added successfully!\n";
+    } else {
+        std::cerr << "Invalid birthdate, Contact not added\n";
+    }
+};
+
+void Manager::saveNewContacts(const std::string& filename) const {
+    std::ofstream outfile(filename, std::ios::app); // Open in append mode
+    if (!outfile.is_open()) {
+        std::cerr << "Failed to open " << filename << " for writing\n";
+        return;
+    }
+    for (const Contact& contact : newContacts) {
+        outfile << contact.getName() << "\n";
+        outfile << contact.getPhone() << "\n";
+        outfile << contact.getEmail() << "\n";
+        outfile << contact.getBirthDate().toString() << "\n";
+        outfile << "--------------------------\n";
+    }
+    outfile.close();
+    std::cout << "Contacts saved to " << filename <<  " successfully!\n";
+}
+
+void Manager::loadAllContacts(const std::string& filename) {
+    std::ifstream infile(filename);
+    if (!infile.is_open()) {
+        std::cout << "Failed to open " << filename << " for reading.\n";
+        return;
+    } else { 
+        std::cout << "Loading contacts from " << filename << "\n";
+        std::string name = "";
+        std::string phone = "";
+        std::string email = "";
+        std::string birthdate = "";
+        std::string delimiter = "";
+        while (std::getline(infile, name) && std::getline(infile, phone) && std::getline(infile, email) && std::getline(infile, birthdate)) {
+            Contact contact(name, phone, email, BirthDate::fromString(birthdate).value());
+            std::getline(infile, delimiter);
+            allContacts.push_back(contact);
+        }
+        infile.close();
+        std::cout << "Contacts loaded successfully: " << allContacts.size() << "\n";
+    }
+}
+
+void Manager::printContacts() const {
+    for (const Contact& contact : allContacts) {
+        contact.print();
+    }
+}
+    bool Manager::isValidPhone(const std::string& phone) {
+        std::regex pattern("^\\([0-9]{3}\\)-[0-9]{3}-[0-9]{4}$");
+        return std::regex_match(phone, pattern); 
+    }    
+    bool Manager::isValidDate(const std::string& date) {
+        std::regex pattern("^[0-9]{4}-[0-9]{2}-[0-9]{2}$");
+        return std::regex_match(date, pattern);
+    }
