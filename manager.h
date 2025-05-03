@@ -10,7 +10,7 @@
 class Manager{
 private:
     std::vector<Contact> contacts;
-    std::vector<Contact> newContacts;
+    std::vector<Contact> newContact;
     std::vector<Contact> storedContacts;
     std::vector<Contact> allContacts;
 
@@ -22,7 +22,7 @@ public:
 //    void searchContacts(const Contact& query);
     void printContacts() const;
     //    std::tuple<int, int, int> parseBirthdate(const std::string& birthdate) const;
-    void saveNewContacts(const std::string& filename) const;
+    void saveNewContact(const std::string& filename, const Contact& newContact);
     void loadAllContacts(const std::string& filename);
     bool isValidPhone(const std::string& phone);
     bool isValidDate(const std::string& date);

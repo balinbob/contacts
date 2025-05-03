@@ -32,28 +32,28 @@ void Manager::addContact() {
     
     if (newBirthDate.has_value()) {
         Contact newContact(name, phone, email, newBirthDate.value());
-        newContacts.push_back(newContact);
+        // newContacts.push_back(newContact);
+        Manager::saveNewContact("mycontacts.txt", newContact);
+        allContacts.push_back(newContact); // Add to allContacts
         std::cout << "Contact added successfully!\n";
     } else {
         std::cerr << "Invalid birthdate, Contact not added\n";
     }
 };
 
-void Manager::saveNewContacts(const std::string& filename) const {
+void Manager::saveNewContact(const std::string& filename, const Contact& newContact) {
     std::ofstream outfile(filename, std::ios::app); // Open in append mode
     if (!outfile.is_open()) {
         std::cerr << "Failed to open " << filename << " for writing\n";
         return;
     }
-    for (const Contact& contact : newContacts) {
-        outfile << contact.getName() << "\n";
-        outfile << contact.getPhone() << "\n";
-        outfile << contact.getEmail() << "\n";
-        outfile << contact.getBirthDate().toString() << "\n";
-        outfile << "--------------------------\n";
-    }
+    outfile << newContact.getName() << "\n";
+    outfile << newContact.getPhone() << "\n";
+    outfile << newContact.getEmail() << "\n";
+    outfile << newContact.getBirthDate().toString() << "\n";
+    outfile << "--------------------------\n";
     outfile.close();
-    std::cout << "Contacts saved to " << filename <<  " successfully!\n";
+    std::cout << "Contact saved to " << filename <<  " successfully!\n";
 }
 
 void Manager::loadAllContacts(const std::string& filename) {
@@ -68,6 +68,7 @@ void Manager::loadAllContacts(const std::string& filename) {
         std::string email = "";
         std::string birthdate = "";
         std::string delimiter = "";
+        allContacts.clear(); // Clear existing contacts before loading
         while (std::getline(infile, name) && std::getline(infile, phone) && std::getline(infile, email) && std::getline(infile, birthdate)) {
             Contact contact(name, phone, email, BirthDate::fromString(birthdate).value());
             std::getline(infile, delimiter);
@@ -84,7 +85,7 @@ void Manager::printContacts() const {
     }
 }
     bool Manager::isValidPhone(const std::string& phone) {
-        std::regex pattern("^\\([0-9]{3}\\)-[0-9]{3}-[0-9]{4}$");
+        std::regex pattern("^[0-9]{3}-[0-9]{3}-[0-9]{4}$");
         return std::regex_match(phone, pattern); 
     }    
     bool Manager::isValidDate(const std::string& date) {
