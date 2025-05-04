@@ -6,16 +6,21 @@
 #include <iostream>
 #include <fstream>
 #include <optional>
+#include <algorithm>
 
-void Manager::addContact() {
+bool Manager::addContact() {
     std::string name = "";
     std::string phone = "";
     std::string email = "";
     std::string birthdate = "";
     
-    std::cout << "Enter a contact.\n";
+    std::cout << "Enter a contact, or press Enter to exit.\n";
     std::cout << "Name           : ";
     std::getline(std::cin, name);
+
+    name = this->trim(name);
+    if (name == "") return false; // Exit if name is empty
+   
     do {
         std::cout << "Phone Number (123-456-7890): ";
         std::getline(std::cin, phone);
@@ -26,20 +31,51 @@ void Manager::addContact() {
         std::cout << "Birthdate (YYYY-MM-DD): ";
         std::getline(std::cin, birthdate);
     } while (!Manager::isValidDate(birthdate));
-
+    
     
     std::optional<BirthDate> newBirthDate = BirthDate::fromString(birthdate);
     
     if (newBirthDate.has_value()) {
         Contact newContact(name, phone, email, newBirthDate.value());
         // newContacts.push_back(newContact);
-        Manager::saveNewContact("mycontacts.txt", newContact);
+        this->saveNewContact("mycontacts.txt", newContact);
         allContacts.push_back(newContact); // Add to allContacts
-        std::cout << "Contact added successfully!\n";
+        // std::cout << "Contact added successfully!\n";
     } else {
         std::cerr << "Invalid birthdate, Contact not added\n";
+        return false;
     }
-};
+    
+    return true;
+}
+
+void Manager::enterContacts() {
+    Manager myManager;
+    int howMany = 0;
+    while (myManager.addContact()) {
+        howMany++;
+    }
+    std::cout << "You entered " << howMany << " contacts\n";
+}
+
+void Manager::searchContacts() {
+    std::string query;
+    bool found = false;
+    std::cout << "Search name: ";
+    std::getline(std::cin, query);
+    
+    std::cout << "Searching for contacts...\n";
+    for (const Contact& contact : allContacts) {
+        if (this->fuzzyMatch(query, contact.getName())) {
+            std::cout << "Found contact:\n";
+            contact.print();
+            found = true;
+        }
+    }
+    if (!found) {
+        std::cout << "Contact not found\n";
+    }
+}
 
 void Manager::saveNewContact(const std::string& filename, const Contact& newContact) {
     std::ofstream outfile(filename, std::ios::app); // Open in append mode
@@ -84,11 +120,27 @@ void Manager::printContacts() const {
         contact.print();
     }
 }
-    bool Manager::isValidPhone(const std::string& phone) {
-        std::regex pattern("^[0-9]{3}-[0-9]{3}-[0-9]{4}$");
-        return std::regex_match(phone, pattern); 
-    }    
-    bool Manager::isValidDate(const std::string& date) {
-        std::regex pattern("^[0-9]{4}-[0-9]{2}-[0-9]{2}$");
-        return std::regex_match(date, pattern);
-    }
+
+bool Manager::isValidPhone(const std::string& phone) {
+    std::regex pattern("^[0-9]{3}-[0-9]{3}-[0-9]{4}$");
+    return std::regex_match(phone, pattern); 
+}    
+bool Manager::isValidDate(const std::string& date) {
+    std::regex pattern("^[0-9]{4}-[0-9]{2}-[0-9]{2}$");
+    return std::regex_match(date, pattern);
+}
+std::string Manager::trim(std::string str) {
+    str.erase(0, str.find_first_not_of(" \t\r\n")); // remove leading spaces
+    str.erase(str.find_last_not_of(" \t\r\n") + 1); // remove trailing spaces
+    return str;
+}
+std::string Manager::toLower(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(),
+        [](unsigned char c) {return std::tolower(c);});
+    return str;
+}
+bool Manager::fuzzyMatch(const std::string& query, const std::string& target) {
+    std::string cleanedQuery = Manager::toLower(Manager::trim(query));
+    std::string cleanedTarget = Manager::toLower(Manager::trim(target));
+    return cleanedTarget.find(cleanedQuery) != std::string::npos;
+}

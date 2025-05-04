@@ -17,14 +17,23 @@ int main() {
         std::cout << "Enter your choice: ";
         int choice = 0;
         std::cin >> choice;
+        
+        if (std::cin.fail()) {
+            std::cin.clear(); // Clear failbit
+            std::cin.ignore(10000, '\n'); // Discard invalid input
+            std::cout << "Invalid input! Please enter a number.\n";
+            continue; // Skip to next loop iteration
+        }
+        
+        
         std::cin.ignore(10000, '\n'); // Clear leftover newline
 
         switch (choice) {
             case 1:
-                myManager.addContact();
+                myManager.enterContacts();
                 break;
             case 2:
-                // myContact.searchByName();
+                myManager.searchContacts();
                 break;
             case 3:
                 myManager.printContacts();
