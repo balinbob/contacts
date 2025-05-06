@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <optional>
 #include <algorithm>
@@ -45,7 +46,6 @@ bool Manager::addContact() {
         std::cerr << "Invalid birthdate, Contact not added\n";
         return false;
     }
-    
     return true;
 }
 
@@ -63,11 +63,12 @@ void Manager::searchContacts() {
     bool found = false;
     std::cout << "Search name: ";
     std::getline(std::cin, query);
-    
+
     std::cout << "Searching for contacts...\n";
-    for (const Contact& contact : allContacts) {
+    for (Contact& contact : allContacts) {
         if (this->fuzzyMatch(query, contact.getName())) {
             std::cout << "Found contact:\n";
+            std::cout << "ID: " << std::setw(3) << std::setfill('0') << contact.getId() << "\n";   
             contact.print();
             found = true;
         }
@@ -76,6 +77,25 @@ void Manager::searchContacts() {
         std::cout << "Contact not found\n";
     }
 }
+
+void Manager::searchContactById(int id) {
+    if (id == 0) {
+        std::cout << "Search ID: ";
+        std::cin >> id;
+        std::cin.ignore(10000, '\n');
+    }
+    for (Contact& contact : allContacts) {
+        if (contact.getId() == id) {
+            contact.print();
+        }
+    }
+}
+
+void Manager::deleteContactById() {
+
+
+}
+
 
 void Manager::saveNewContact(const std::string& filename, const Contact& newContact) {
     std::ofstream outfile(filename, std::ios::app); // Open in append mode

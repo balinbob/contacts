@@ -6,14 +6,16 @@ int main() {
     Manager myManager;
     myContact.print();
     
+    myManager.loadAllContacts("mycontacts.txt");
 
     while (true) {
         std::cout << "Menu:\n";
         std::cout << "1. Enter data\n";
         std::cout << "2. Search by name\n";
         std::cout << "3. Print all\n";
-        std::cout << "4. Load from file\n";
-        std::cout << "5. Exit\n";
+        std::cout << "4. Delete Contact by ID\n";
+        std::cout << "5. Load from file\n";
+        std::cout << "6. Exit\n";
         std::cout << "Enter your choice: ";
         int choice = 0;
         std::cin >> choice;
@@ -40,9 +42,12 @@ int main() {
                 // myContact.printSorted();
                 break;
             case 4:
-                myManager.loadAllContacts("mycontacts.txt");
+                myManager.searchContactById();
                 break;
             case 5:
+                myManager.loadAllContacts("mycontacts.txt");
+                break;
+            case 6:
                 std::cout << "Goodbye!\n";
                 return 0;
                 break;

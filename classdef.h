@@ -31,14 +31,19 @@ public:
 
 class Contact {
 private:
+    static int nextId;
+    const int id;
     std::string name;
     std::string phoneNumber;
     std::string emailAddress;
     BirthDate birthDate;
-
-public:
+    
+    
+    public:
     Contact(const std::string& n, const std::string& p, const std::string& e, const BirthDate& b);
     Contact();
+    
+    int getId() const;
 
     std::string getName() const;
     std::string getPhone() const;
@@ -50,6 +55,7 @@ public:
     void setEmail(const std::string& e);
     void setBirthDate(const BirthDate& b);
 
+    
     void print() const;
 };
 

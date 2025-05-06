@@ -11,7 +11,8 @@ class Manager{
 private:
     std::vector<Contact> contacts;
     std::vector<Contact> newContact;
-    std::vector<Contact> storedContacts;
+    std::vector<Contact> tempContacts;
+    //std::vector<Contact> storedContacts;
     std::vector<Contact> allContacts;
 
 
@@ -21,6 +22,8 @@ public:
     bool addContact();
     void enterContacts();
     void searchContacts();
+    void searchContactById(int id = 0);
+    void deleteContactById();
     void printContacts() const;
     void saveNewContact(const std::string& filename, const Contact& newContact);
     void loadAllContacts(const std::string& filename);
