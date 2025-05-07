@@ -48,7 +48,6 @@ bool Manager::addContact() {
 }
 
 void Manager::enterContacts() {
-    // Manager myManager;
     int howMany = 0;
     while (this->addContact()) {
         howMany++;

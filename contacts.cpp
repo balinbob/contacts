@@ -2,10 +2,7 @@
 #include "manager.h"
 
 int main() {
-    Contact myContact("Bob Allred", "910-895-8888", "balinbob@gmail.com", BirthDate(1961, 01, 18));
     Manager myManager;
-    myContact.print();
-    
     myManager.loadAllContacts("mycontacts.txt");
 
     while (true) {
@@ -26,8 +23,6 @@ int main() {
             std::cout << "Invalid input! Please enter a number.\n";
             continue; // Skip to next loop iteration
         }
-        
-        
         std::cin.ignore(10000, '\n'); // Clear leftover newline
 
         switch (choice) {
