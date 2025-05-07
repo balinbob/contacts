@@ -9,9 +9,9 @@
 
 class Manager{
 private:
-    std::vector<Contact> contacts;
-    std::vector<Contact> newContact;
-    std::vector<Contact> tempContacts;
+    //std::vector<Contact> contacts;
+    //std::vector<Contact> newContact;
+    //std::vector<Contact> tempContacts;
     //std::vector<Contact> storedContacts;
     std::vector<Contact> allContacts;
 
@@ -22,10 +22,11 @@ public:
     bool addContact();
     void enterContacts();
     void searchContacts();
-    void searchContactById(int id = 0);
+    std::vector<Contact>::iterator searchContactById(int id = 0);
     void deleteContactById();
     void printContacts() const;
     void saveNewContact(const std::string& filename, const Contact& newContact);
+    void saveAllContacts(const std::string& filename);
     void loadAllContacts(const std::string& filename);
     static bool isValidPhone(const std::string& phone);
     static bool isValidDate(const std::string& date);

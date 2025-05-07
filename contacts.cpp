@@ -10,10 +10,10 @@ int main() {
 
     while (true) {
         std::cout << "Menu:\n";
-        std::cout << "1. Enter data\n";
+        std::cout << "1. Enter contacts\n";
         std::cout << "2. Search by name\n";
-        std::cout << "3. Print all\n";
-        std::cout << "4. Delete Contact by ID\n";
+        std::cout << "3. Print all contacts\n";
+        std::cout << "4. Delete contact by id\n";
         std::cout << "5. Load from file\n";
         std::cout << "6. Exit\n";
         std::cout << "Enter your choice: ";
@@ -42,7 +42,7 @@ int main() {
                 // myContact.printSorted();
                 break;
             case 4:
-                myManager.searchContactById();
+                myManager.deleteContactById();
                 break;
             case 5:
                 myManager.loadAllContacts("mycontacts.txt");

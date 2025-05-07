@@ -32,7 +32,7 @@ public:
 class Contact {
 private:
     static int nextId;
-    const int id;
+    int id;
     std::string name;
     std::string phoneNumber;
     std::string emailAddress;

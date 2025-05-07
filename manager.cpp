@@ -38,10 +38,8 @@ bool Manager::addContact() {
     
     if (newBirthDate.has_value()) {
         Contact newContact(name, phone, email, newBirthDate.value());
-        // newContacts.push_back(newContact);
+        this->allContacts.push_back(newContact); // Add to allContacts
         this->saveNewContact("mycontacts.txt", newContact);
-        allContacts.push_back(newContact); // Add to allContacts
-        // std::cout << "Contact added successfully!\n";
     } else {
         std::cerr << "Invalid birthdate, Contact not added\n";
         return false;
@@ -50,9 +48,9 @@ bool Manager::addContact() {
 }
 
 void Manager::enterContacts() {
-    Manager myManager;
+    // Manager myManager;
     int howMany = 0;
-    while (myManager.addContact()) {
+    while (this->addContact()) {
         howMany++;
     }
     std::cout << "You entered " << howMany << " contacts\n";
@@ -65,7 +63,7 @@ void Manager::searchContacts() {
     std::getline(std::cin, query);
 
     std::cout << "Searching for contacts...\n";
-    for (Contact& contact : allContacts) {
+    for (Contact& contact : this->allContacts) {
         if (this->fuzzyMatch(query, contact.getName())) {
             std::cout << "Found contact:\n";
             std::cout << "ID: " << std::setw(3) << std::setfill('0') << contact.getId() << "\n";   
@@ -78,22 +76,63 @@ void Manager::searchContacts() {
     }
 }
 
-void Manager::searchContactById(int id) {
+std::vector<Contact>::iterator Manager::searchContactById(int id) {
     if (id == 0) {
-        std::cout << "Search ID: ";
-        std::cin >> id;
-        std::cin.ignore(10000, '\n');
-    }
-    for (Contact& contact : allContacts) {
-        if (contact.getId() == id) {
-            contact.print();
+        while (true) {
+            std::cout << "Search ID: ";
+            std::cin >> id;
+
+            if (std::cin.fail()) {
+                std::cin.clear(); // Clear failbit
+                std::cin.ignore(10000, '\n'); // Discard invalid input
+                std::cout << "Invalid input! Please enter a number.\n";
+                continue;
+            }
+            std::cin.ignore(10000, '\n');
+            break;
         }
     }
+
+    for (auto it = this->allContacts.begin(); it != this->allContacts.end(); ++it) {
+        if (it->getId() == id) {
+            it->print();
+            return it;
+        }
+    }
+    std::cout << "ID not found..\n";
+    return this->allContacts.end();
 }
 
 void Manager::deleteContactById() {
+    char response;
+    std::vector<Contact>::iterator it = searchContactById();
+    if (it == this->allContacts.end()) { return; }
+    std::cout << "Really delete contact? (y/n) ";
+    std::cin >> response;
+    if (response != 'y' && response != 'Y') {
+        std::cout << "cancelled..\n";
+        return;
+    }
+    this->allContacts.erase(it);
+    saveAllContacts("mycontacts.txt");
+    std::cout << "Contact deleted\n";
+}
 
-
+void Manager::saveAllContacts(const std::string& filename) {
+    std::ofstream outfile(filename);
+    if (!outfile.is_open()) {
+        std::cerr << "Failed to open " << filename << " for writing\n";
+        return;
+    }
+    for (const Contact& contact : this->allContacts) {
+        outfile << contact.getName() << "\n";
+        outfile << contact.getPhone() << "\n";
+        outfile << contact.getEmail() << "\n";
+        outfile << contact.getBirthDate().toString() << "\n";
+        outfile << "--------------------------\n";
+    }
+    outfile.close();
+    std::cout << "All contacts written to file\n";
 }
 
 
@@ -124,19 +163,19 @@ void Manager::loadAllContacts(const std::string& filename) {
         std::string email = "";
         std::string birthdate = "";
         std::string delimiter = "";
-        allContacts.clear(); // Clear existing contacts before loading
+        this->allContacts.clear(); // Clear existing contacts before loading
         while (std::getline(infile, name) && std::getline(infile, phone) && std::getline(infile, email) && std::getline(infile, birthdate)) {
             Contact contact(name, phone, email, BirthDate::fromString(birthdate).value());
             std::getline(infile, delimiter);
-            allContacts.push_back(contact);
+            this->allContacts.push_back(contact);
         }
         infile.close();
-        std::cout << "Contacts loaded successfully: " << allContacts.size() << "\n";
+        std::cout << "Contacts loaded successfully: " << this->allContacts.size() << "\n";
     }
 }
 
 void Manager::printContacts() const {
-    for (const Contact& contact : allContacts) {
+    for (const Contact& contact : this->allContacts) {
         contact.print();
     }
 }
