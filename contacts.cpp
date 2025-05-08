@@ -8,8 +8,8 @@ void printMenu() {
     std::cout << "2. Search by name\n";
     std::cout << "3. Print all contacts\n";
     std::cout << "4. Delete contact by id\n";
-    std::cout << "5. Load from file\n";
-    std::cout << "6. Exit\n";
+    std::cout << "5. Print sorted list of names\n";
+    std::cout << "6/q. Exit\n";
     std::cout << "Enter your choice: ";
     return;
 }
@@ -20,7 +20,9 @@ int getIntInput() {
         printMenu();
         std::getline(std::cin, inp);
         if (inp.empty()) { continue; }
-    
+        if (inp == "q") {
+            return 0;
+        }    
         try {
             input = std::stoi(inp);
         } catch (const std::invalid_argument& e) {
@@ -30,7 +32,6 @@ int getIntInput() {
             std::cerr << "Number out of range: " << e.what() << "\n";
             continue;
         }
-
     }
     return input;
 }
@@ -60,9 +61,10 @@ int main() {
                 myManager.deleteContactById();
                 break;
             case 5:
-                myManager.loadAllContacts("mycontacts.txt");
+                myManager.printSortedList();
                 break;
             case 6:
+            case 0:
                 std::cout << "Goodbye!\n";
                 return 0;
                 break;

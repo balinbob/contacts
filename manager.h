@@ -33,6 +33,7 @@ public:
     static std::string trim(std::string str);
     static std::string toLower(std::string str);
     bool fuzzyMatch(const std::string& query, const std::string& target);
+    void printSortedList() const;
 };
 
 

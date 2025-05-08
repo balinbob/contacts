@@ -179,6 +179,19 @@ void Manager::printContacts() const {
     }
 }
 
+void Manager::printSortedList() const {
+        std::vector<Contact> sorted = this->allContacts; // copy, not reference
+        std::sort(sorted.begin(), sorted.end(),
+            [](const Contact& a, const Contact& b) {
+                return toLower(a.getName()) < toLower(b.getName());
+        });
+    
+        std::cout << "Sorted Contacts (Name / ID):\n";
+        for (const Contact& contact : sorted) {
+            std::cout << contact.getName() << " (ID: " << contact.getId() << ")\n";
+        }
+    }
+    
 bool Manager::isValidPhone(const std::string& phone) {
     std::regex pattern("^[0-9]{3}-[0-9]{3}-[0-9]{4}$");
     return std::regex_match(phone, pattern); 
