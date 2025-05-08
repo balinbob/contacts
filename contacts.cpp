@@ -1,29 +1,49 @@
 #include "classdef.h"
 #include "manager.h"
 
+
+void printMenu() {
+    std::cout << "Menu:\n";
+    std::cout << "1. Enter contacts\n";
+    std::cout << "2. Search by name\n";
+    std::cout << "3. Print all contacts\n";
+    std::cout << "4. Delete contact by id\n";
+    std::cout << "5. Load from file\n";
+    std::cout << "6. Exit\n";
+    std::cout << "Enter your choice: ";
+    return;
+}
+int getIntInput() {
+    int input = 0;
+    std::string inp = "";
+    while (input == 0) {
+        printMenu();
+        std::getline(std::cin, inp);
+        if (inp.empty()) { continue; }
+    
+        try {
+            input = std::stoi(inp);
+        } catch (const std::invalid_argument& e) {
+            std::cerr << "Not a number: " << e.what() << "\n";
+            continue;
+        } catch (const std::out_of_range& e) {
+            std::cerr << "Number out of range: " << e.what() << "\n";
+            continue;
+        }
+
+    }
+    return input;
+}
+
+
+
 int main() {
     Manager myManager;
     myManager.loadAllContacts("mycontacts.txt");
 
     while (true) {
-        std::cout << "Menu:\n";
-        std::cout << "1. Enter contacts\n";
-        std::cout << "2. Search by name\n";
-        std::cout << "3. Print all contacts\n";
-        std::cout << "4. Delete contact by id\n";
-        std::cout << "5. Load from file\n";
-        std::cout << "6. Exit\n";
-        std::cout << "Enter your choice: ";
-        int choice = 0;
-        std::cin >> choice;
         
-        if (std::cin.fail()) {
-            std::cin.clear(); // Clear failbit
-            std::cin.ignore(10000, '\n'); // Discard invalid input
-            std::cout << "Invalid input! Please enter a number.\n";
-            continue; // Skip to next loop iteration
-        }
-        std::cin.ignore(10000, '\n'); // Clear leftover newline
+        int choice = getIntInput();
 
         switch (choice) {
             case 1:
